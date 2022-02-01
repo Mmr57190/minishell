@@ -1,0 +1,61 @@
+#!/usr/bin/expect -f
+
+set force_conservative 0  ;# set to 1 to force conservative mode even if
+			  ;# script wasn't run conservatively originally
+if {$force_conservative} {
+	set send_slow {1 .1}
+	proc send {ignore arg} {
+		sleep .1
+		exp_send -s -- $arg
+	}
+}
+
+set timeout -1
+set map [lindex $argv 0];
+spawn ./mysh
+match_max 100000
+expect -exact "$>"
+send -- "ls -l\r"
+sleep 1
+expect -exact "$>"
+send -- "pwd\r"
+sleep 1
+expect -exact "$>"
+send -- "cd test_shell\r"
+sleep 1
+expect -exact "$>"
+send -- "./a.out\r"
+sleep 1
+expect -exact "$>"
+send -- "cd ..\r"
+sleep 1
+expect -exact "$>"
+send -- "ls\r"
+sleep 1
+expect -exact "$>"
+send -- "env\r"
+sleep 1
+expect -exact "$>"
+send -- "cd haha\r"
+sleep 1
+expect -exact "$>"
+send -- "pppp\r"
+sleep 1
+expect -exact "$>"
+send -- "setenv tata coucou\r"
+sleep 1
+expect -exact "$>"
+send -- "env\r"
+sleep 1
+expect -exact "$>"
+send -- "unsetenv 3 oui\r"
+sleep 1
+expect -exact "$>"
+send -- "env\r"
+sleep 1
+expect -exact "$>"
+send -- "setenv tata coucou essai bug\r"
+sleep 1
+expect -exact "$>"
+send -- "exit\r"
+expect eof
